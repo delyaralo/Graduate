@@ -1,4 +1,4 @@
-# graduate
+# Graduate
 
 A new Flutter project.
 
