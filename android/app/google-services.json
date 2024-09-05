@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "526713170963",
+    "project_id": "graduate-daf22",
+    "storage_bucket": "graduate-daf22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526713170963:android:b41e16eda00072f09b63e6",
+        "android_client_info": {
+          "package_name": "com.graduate.gr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcNaC230HfXxJBQeZMI6VMTYf8cXc8KHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
