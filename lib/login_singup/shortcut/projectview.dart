@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graduate/login_singup/auth/login.dart';
 import '../../Edit/edit_project.dart';
@@ -7,6 +8,7 @@ import '../../course_page/shortcut/projectview.dart';
 import '../../main.dart';
 import 'package:http/http.dart' as http;
 
+import '../../splashScreen/customLoadingIndicator.dart';
 import '../auth/token_manager.dart';
 class ProjectView extends StatefulWidget
 {
@@ -42,7 +44,7 @@ class _ProjectViewState extends State<ProjectView> {
     // TODO: implement build
     return  Center(
       child: isloaded?GridView.builder(
-        itemCount:widget.check==true?ProjectInfo.length:2,
+        itemCount:widget.check==true?ProjectInfo.length:4,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -87,7 +89,15 @@ class _ProjectViewState extends State<ProjectView> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: Image.network(ProjectInfo[index]['image'], width: 80, height: 80,fit:BoxFit.fill,),
+                    child:CachedNetworkImage(
+                      imageUrl: ProjectInfo[index]['image'],
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    )
+                    ,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -95,6 +105,10 @@ class _ProjectViewState extends State<ProjectView> {
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   const SizedBox(height: 10),
+                  showPrice == true ? Text(
+                    ProjectInfo[index]['price'].toString(),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black),
+                  ):SizedBox.shrink(),
                   Text(
                     "اضافة",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigoAccent[400]),
@@ -104,12 +118,7 @@ class _ProjectViewState extends State<ProjectView> {
             ),
           );
         },
-      ):Center(child: Column(
-        children: [
-          SizedBox(height: MediaQuery.of(context).size.height/8,),
-          CircularProgressIndicator(),
-        ],
-      )),
+      ):CustomLoadingIndicator(),
     );
   }
   Future<List<dynamic>> getProjects() async {

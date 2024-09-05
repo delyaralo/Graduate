@@ -6,10 +6,12 @@ import 'package:graduate/login_singup/auth/login.dart';
 import 'package:graduate/login_singup/shortcut/custombotton.dart';
 import 'package:graduate/login_singup/shortcut/imageview.dart';
 import 'package:graduate/screens.dart';
+import 'package:graduate/splashScreen/customLoadingIndicator.dart';
 import 'package:graduate/video_section.dart';
 import 'Description_section.dart';
 import 'login_singup/auth/token_manager.dart';
 import 'login_singup/shortcut/Count_video_section.dart';
+import 'main.dart';
 import 'screens/buy_course.dart';
 
 class CourseScreen extends StatefulWidget {
@@ -19,7 +21,8 @@ class CourseScreen extends StatefulWidget {
   final String Coursetitle;
   final String price;
   final String description;
-
+  final String depWhatsApp;
+  final String trailerVideo;
   // ignore: non_constant_identifier_names
   const CourseScreen({
     super.key,
@@ -29,6 +32,9 @@ class CourseScreen extends StatefulWidget {
     required this.lock,
     required this.price,
     required this.description,
+    required this.depWhatsApp,
+    required this.trailerVideo,
+
   });
 
   @override
@@ -103,16 +109,20 @@ class _CourseScreenState extends State<CourseScreen> {
           children: [
             ListView(
               children: [
-                ImageView(isArrow: true, img: widget.Courseimage),
+                ImageView(isArrow: true, img: widget.Courseimage, trailerVideo: widget.trailerVideo,),
                 const SizedBox(height: 15),
-                Text(
-                  "${widget.Coursetitle} Complete Course",
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                Center(
+                  child: Text(
+                    widget.Coursetitle ,
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 const SizedBox(height: 5),
-                Text(
-                  "منصة خريج التعليمية",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.7)),
+                Center(
+                  child: Text(
+                    "منصة خريج التعليمية",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.7)),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Container(
@@ -167,12 +177,15 @@ class _CourseScreenState extends State<CourseScreen> {
                 Center(
                   child: widget.lock
                       ? int.parse(widget.price) != 0
-                      ? null
+                      ? showPrice==true ?Text(
+                    widget.price + "  :  السعر ",
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ):SizedBox.shrink()
                       : Text(
                     " مجاناً ",
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   )
-                      : null,
+                      :SizedBox.shrink(),
                 ),
                 Center(
                   child: widget.lock
@@ -181,7 +194,7 @@ class _CourseScreenState extends State<CourseScreen> {
                       if (0 < int.parse(widget.price)) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => BuyCourse(price: widget.price, title: widget.Coursetitle),
+                            builder: (context) => BuyCourse(price: widget.price, title: widget.Coursetitle, depWhatsApp:widget.depWhatsApp),
                           ),
                         );
                       } else {
@@ -195,7 +208,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 const SizedBox(height: 10),
                 isVideosSection
                     ? widget.lock
-                    ? CountVideoSection(CourseId: widget.CourseId, lock: widget.lock, phone_number: Userinfo['phoneNumber'])
+                    ? CountVideoSection(CourseId: widget.CourseId, lock: widget.lock, phone_number: Userinfo['phoneNumber'],trailerVideo:widget.trailerVideo)
                     : VideoSection(CourseId: widget.CourseId, lock: widget.lock, phone_number: Userinfo['phoneNumber'])
                     : DescriptionSection(description: widget.description),
               ],
@@ -209,9 +222,7 @@ class _CourseScreenState extends State<CourseScreen> {
           ],
 
         )
-            : Center(
-          child: CircularProgressIndicator(color: Colors.deepPurple),
-        ),
+            : CustomLoadingIndicator(),
       ),
     );
   }

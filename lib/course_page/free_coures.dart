@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../Edit/edit_course.dart';
 import '../course_screen.dart';
@@ -37,9 +38,18 @@ class _FreeCourseState extends State<FreeCourse> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return   Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "الدورات المجانية",
+          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
+        ),
+      ),
       body: ListView(
         children: [
-          CustomAppBarWidget(text:"الدورات المجانية ",),
           const SizedBox(height: 20,),
           Center(
             child:isloaded? GridView.builder(
@@ -57,7 +67,7 @@ class _FreeCourseState extends State<FreeCourse> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CourseScreen(CourseId:CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: true,price: CourseInfo[index]['price'].toString(), description: CourseInfo[index]['description'],)),
+                      MaterialPageRoute(builder: (context) => CourseScreen(CourseId:CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: true,price: CourseInfo[index]['price'].toString(), description: CourseInfo[index]['description'], depWhatsApp: '07748687725', trailerVideo: CourseInfo[index]['trailerVideo'],)),
                     );
                   },
                   onLongPress: (){
@@ -91,20 +101,33 @@ class _FreeCourseState extends State<FreeCourse> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10),
-                          child: Image.network(CourseInfo[index]['image'], width: 100, height: 100),
+                          child: CachedNetworkImage(
+                            imageUrl: CourseInfo[index]['image'],
+                            width: 100,
+                            height: 100,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           CourseInfo[index]['title'],
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6)),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black.withOpacity(0.6),
+                          ),
+                          overflow: TextOverflow.ellipsis, // يستخدم لإضافة "..." في نهاية النص إذا كان طويلًا
+                          maxLines: 2, // يحدد عدد الأسطر
+                          textAlign: TextAlign.center, // لضبط النص في الوسط
                         ),
                         const SizedBox(height: 10),
                         CourseInfo[index]['price']!=0?Text(
                           CourseInfo[index]['price'].toString(),
                           style: TextStyle(fontSize: 15, fontWeight:  FontWeight.bold),
                         ):Text(
-                          "مجانا",
-                          style: TextStyle(fontSize: 15, fontWeight:  FontWeight.bold)),
+                            "مجانا",
+                            style: TextStyle(fontSize: 15, fontWeight:  FontWeight.bold)),
                       ],
                     ),
                   ),

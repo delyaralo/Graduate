@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graduate/course_screen.dart';
 import 'package:graduate/login_singup/auth/login.dart';
@@ -8,6 +9,7 @@ import 'package:http/http.dart' as http;
 
 import '../login_singup/auth/token_manager.dart';
 import '../main.dart';
+import '../splashScreen/customLoadingIndicator.dart';
 import 'appBar.dart';
 class Favorites extends StatefulWidget
 {
@@ -36,14 +38,14 @@ class _Favorites extends State<Favorites> {
       });
     }
     else
-      {
-        setState(() {
-          isloaded=true;
-        });
-        setState(() {
-          isempty=true;
-        });
-      }
+    {
+      setState(() {
+        isloaded=true;
+      });
+      setState(() {
+        isempty=true;
+      });
+    }
   }
   @override
   Widget build (BuildContext context)
@@ -51,7 +53,6 @@ class _Favorites extends State<Favorites> {
     return ListView(
       physics:BouncingScrollPhysics(),
       children: [
-        CustomAppBarWidget(text:"دوراتك",),
         const SizedBox(height: 20,),
         Center(
           child:isloaded? GridView.builder(
@@ -69,7 +70,7 @@ class _Favorites extends State<Favorites> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CourseScreen(CourseId:CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: false,price: CourseInfo[index]['price'].toString(),description: CourseInfo[index]['description'])),
+                    MaterialPageRoute(builder: (context) => CourseScreen(CourseId:CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: false,price: CourseInfo[index]['price'].toString(),description: CourseInfo[index]['description'], depWhatsApp: '07748687725', trailerVideo: CourseInfo[index]['trailerVideo'],)),
                   );
                 },
                 child: Container(
@@ -82,28 +83,36 @@ class _Favorites extends State<Favorites> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(10),
-                        child: Image.network(CourseInfo[index]['image'], width: 100, height: 100),
+                        child: CachedNetworkImage(
+                          imageUrl: CourseInfo[index]['image'],
+                          width: 100,
+                          height: 100,
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        ),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         CourseInfo[index]['title'],
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6)),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black.withOpacity(0.6),
+                        ),
+                        overflow: TextOverflow.ellipsis, // يستخدم لإضافة "..." في نهاية النص إذا كان طويلًا
+                        maxLines: 2, // يحدد عدد الأسطر
+                        textAlign: TextAlign.center, // لضبط النص في الوسط
                       ),
                       const SizedBox(height: 10),
-                Text(
-                  "تم الاضافة",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6))),
+                      Text(
+                          "تم الاضافة",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6))),
                     ],
                   ),
                 ),
               );
             },
-          ):Center(child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height/1.8,),
-              CircularProgressIndicator(),
-            ],
-          )),
+          ):CustomLoadingIndicator(),
         ),
         Container(child: isempty?Center(child: Text("لا توجد كورسات",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),)):null)
       ],
@@ -124,9 +133,9 @@ class _Favorites extends State<Favorites> {
         return [response.statusCode];
       }
       else
-        {
-          return [response.statusCode];
-        }
+      {
+        return [response.statusCode];
+      }
     } catch (e) {
       // Handle any exceptions that occur during the request
       print("Error fetching courses: $e");

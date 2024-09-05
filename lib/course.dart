@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graduate/Edit/edit_project.dart';
 import 'package:graduate/login_singup/auth/login.dart';
+import 'package:graduate/splashScreen/customLoadingIndicator.dart';
 import 'Edit/edit_course.dart';
 import 'course_screen.dart';
 import 'login_singup/auth/token_manager.dart';
@@ -52,29 +54,29 @@ class _CourseState extends State<Course> {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: (){
-              Navigator.push(context,MaterialPageRoute(builder: (context) =>CourseScreen( CourseId: CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: true, price:CourseInfo[index]['price'].toString(), description: CourseInfo[index]['description'],)));
+              Navigator.push(context,MaterialPageRoute(builder: (context) =>CourseScreen( CourseId: CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: true, price:CourseInfo[index]['price'].toString(), description: CourseInfo[index]['description'], depWhatsApp: '07748687725', trailerVideo:CourseInfo[index]['trailerVideo'],)));
             },
             onLongPress: (){
               if(isadmin)
               {
-              showDialog(context: context, builder: (context) =>
-                AlertDialog(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(onPressed:(){
-                          showDialog(context: context, builder: (context) =>
-                          AlertDialog(content: MaterialButton(onPressed: (){},child: Text("تاكيد الحذف",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,letterSpacing: 1),),))
-                          );
-                      }, icon: Icon(Icons.delete,color: Colors.red,)),
-                      IconButton(onPressed: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder:(context) => EditCourse(),));
-                      }, icon: Icon(Icons.edit,color: Colors.indigoAccent[400],)),
-                    ],
-                  ),
-                ),);
-            }
-              },
+                showDialog(context: context, builder: (context) =>
+                    AlertDialog(
+                      content: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          IconButton(onPressed:(){
+                            showDialog(context: context, builder: (context) =>
+                                AlertDialog(content: MaterialButton(onPressed: (){},child: Text("تاكيد الحذف",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,letterSpacing: 1),),))
+                            );
+                          }, icon: Icon(Icons.delete,color: Colors.red,)),
+                          IconButton(onPressed: (){
+                            Navigator.of(context).push(MaterialPageRoute(builder:(context) => EditCourse(),));
+                          }, icon: Icon(Icons.edit,color: Colors.indigoAccent[400],)),
+                        ],
+                      ),
+                    ),);
+              }
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
@@ -85,7 +87,13 @@ class _CourseState extends State<Course> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: Image.network(CourseInfo[index]['image'], width: 80, height: 80),
+                    child: CachedNetworkImage(
+                      imageUrl: CourseInfo[index]['image'],
+                      width: 100,
+                      height: 100,
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -93,21 +101,16 @@ class _CourseState extends State<Course> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6)),
                   ),
                   const SizedBox(height: 10),
-                  Text(
+                  showPrice==true ? Text(
                     CourseInfo[index]['price'].toString(),
                     style: TextStyle(fontSize: 15, fontWeight:  FontWeight.bold),
-                  )
+                  ):SizedBox.shrink()
                 ],
               ),
             ),
           );
         },
-      ):Center(child: Column(
-        children: [
-          SizedBox(height: 100,),
-          CircularProgressIndicator(),
-        ],
-      )),
+      ):CustomLoadingIndicator(),
     );
   }
   Future<List<dynamic>> getCourse(String instructorId) async {

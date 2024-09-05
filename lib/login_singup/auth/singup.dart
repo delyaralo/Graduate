@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:graduate/login_singup/auth/login.dart';
 import '../../main.dart';
+import '../../splashScreen/customLoadingIndicator.dart';
 import '../shortcut/CustomTextFormFieldStudentName.dart';
 import '../shortcut/Customtextformfieldpassword.dart';
 import '../shortcut/custombotton.dart';
@@ -87,14 +88,14 @@ class _Signup extends State<Signup>
                   custombutton(onPressed: () async{
                     try {
                       if (passward.text !=confirmpassward.text)
-                        {
-                          showSnackbar(context,"كلمة السر غير متطابقة");
-                        }
-                      else {
-                      if(_formkey.currentState!.validate()) {
-                        await registerUser();
-
+                      {
+                        showSnackbar(context,"كلمة السر غير متطابقة");
                       }
+                      else {
+                        if(_formkey.currentState!.validate()) {
+                          await registerUser();
+
+                        }
                       }
                     } catch (e) {
                       print(e);
@@ -113,7 +114,7 @@ class _Signup extends State<Signup>
     try {
       showDialog(
         context: context,
-        builder: (context) => Center(child: CircularProgressIndicator()),
+        builder: (context) => CustomLoadingIndicator(),
       );
 
       var url = Uri.https("graduate-a29962909a04.herokuapp.com", "/api/Auth/Register");
@@ -181,7 +182,7 @@ class _Signup extends State<Signup>
         duration: const Duration(seconds: 6), // Adjust the duration as needed
       ),
     );
-}
+  }
 
   Future<void> showConfirmationDialog() async {
     return showDialog<void>(

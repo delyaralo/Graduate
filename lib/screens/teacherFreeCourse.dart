@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graduate/Edit/edit_techer.dart';
 import 'package:graduate/course_page/coures_page.dart';
@@ -10,6 +11,7 @@ import '../login_singup/shortcut/customappbar.dart';
 import '../main.dart';
 import 'package:http/http.dart' as http;
 
+import '../splashScreen/customLoadingIndicator.dart';
 import 'appBar.dart';
 class TeachersFreeCourse extends StatefulWidget
 {
@@ -43,9 +45,19 @@ class _TeachersState extends State<TeachersFreeCourse> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "أساتذة الدورات المجانية",
+          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
+        ),
+      ),
       body: ListView(
+
         children: [
-          CustomAppBarWidget(text:"أساتذة الدورات المجانية",),
           const SizedBox(height: 20,),
           Center(
             child:isloaded? GridView.builder(
@@ -94,7 +106,13 @@ class _TeachersState extends State<TeachersFreeCourse> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10),
-                          child: ClipOval(child: Image.network(TeacherInfo[index]['image'], width: 100, height: 100)),
+                          child: ClipOval(child:CachedNetworkImage(
+                            imageUrl: TeacherInfo[index]['image'],
+                            width: 100,
+                            height: 100,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          )),
                         ),
                         Text(
                             TeacherInfo[index]['title'],
@@ -109,12 +127,7 @@ class _TeachersState extends State<TeachersFreeCourse> {
                   ),
                 );
               },
-            ):Center(child: Column(
-              children: [
-                SizedBox(height: 200,),
-                CircularProgressIndicator(),
-              ],
-            )),
+            ):CustomLoadingIndicator(),
           ),
         ],
       ),

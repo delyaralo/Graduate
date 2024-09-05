@@ -5,6 +5,7 @@ import 'package:graduate/login_singup/shortcut/customappbar.dart';
 import '../login_singup/auth/token_manager.dart';
 import '../login_singup/shortcut/custombotton.dart';
 import '../main.dart';
+import '../splashScreen/customLoadingIndicator.dart';
 import 'appBar.dart';
 
 class Profile extends StatefulWidget {
@@ -41,9 +42,6 @@ class _ProfileState extends State<Profile> {
             children: [
               Column(
                 children: [
-                  CustomAppBarWidget(
-                    text: "Profile",
-                  ),
                   const SizedBox(height: 40,),
                   isloaded ? Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -132,11 +130,7 @@ class _ProfileState extends State<Profile> {
                         ),
                       ],
                     ),
-                  ) : Center(child: Column(
-                      children: [
-                        SizedBox(height: MediaQuery.of(context).size.height / 6,),
-                        const CircularProgressIndicator()
-                      ])),
+                  ) : CustomLoadingIndicator(),
                 ],
               ),
             ],

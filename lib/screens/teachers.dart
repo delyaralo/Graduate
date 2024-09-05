@@ -1,56 +1,62 @@
-// ignore_for_file: non_constant_identifier_names
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:graduate/Edit/edit_techer.dart';
 import 'package:graduate/course_page/coures_page.dart';
-import 'package:graduate/login_singup/auth/login.dart';
 import '../login_singup/auth/token_manager.dart';
-import '../login_singup/shortcut/customappbar.dart';
-import '../main.dart';
-import 'package:http/http.dart' as http;
-
+import '../splashScreen/customLoadingIndicator.dart';
 import 'appBar.dart';
-class Teachers extends StatefulWidget
-{
-  const Teachers({super.key});
+
+class Teachers extends StatefulWidget {
+  final String departmentId;
+
+  Teachers({super.key, required this.departmentId});
   @override
   State<Teachers> createState() => _TeachersState();
 }
 
 class _TeachersState extends State<Teachers> {
-  late List<dynamic> TeacherInfo;
-  late bool isloaded=false;
+  late String depWhatsApp;
+  String depTelegram="----";
+  late List<dynamic> instructors = [];
+  late bool isLoaded = false;
+
   @override
-  void initState()
-  {
+  void initState() {
     super.initState();
     _loadTeacherInfo();
   }
+
   Future<void> _loadTeacherInfo() async {
-    final teacherInfo = await getTeacher();
-    if (teacherInfo.isNotEmpty) {
+    final departmentData = await getTeacher();
+    if (departmentData != null) {
       setState(() {
-        TeacherInfo = teacherInfo;
-        print(TeacherInfo.length);
-      });
-      setState(() {
-        isloaded=true;
+        depWhatsApp = departmentData['departmentContact'];  // تحديث بيانات التواصل// تحديث بيانات التواصل
+        instructors = departmentData['instructors'];  // تخزين قائمة المدرسين
+        isLoaded = true;
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "الأساتذة",
+          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
+        ),
+      ),
       body: ListView(
-        physics:BouncingScrollPhysics(),
+        physics: BouncingScrollPhysics(),
         children: [
-          CustomAppBarWidget(text:"Teachers",),
           const SizedBox(height: 20,),
           Center(
-            child:isloaded? GridView.builder(
-              itemCount:TeacherInfo.length,
+            child: isLoaded ? GridView.builder(
+              itemCount: instructors.length,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -61,29 +67,8 @@ class _TeachersState extends State<Teachers> {
               ),
               itemBuilder: (context, index) {
                 return InkWell(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CoursePage(TeacherId:TeacherInfo[index]['id']),));
-                  },
-                  onLongPress: (){
-                    if(isadmin)
-                    {
-                      showDialog(context: context, builder: (context) =>
-                          AlertDialog(
-                            content: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                IconButton(onPressed:(){
-                                  showDialog(context: context, builder: (context) =>
-                                      AlertDialog(content: MaterialButton(onPressed: (){},child: Text("تاكيد الحذف",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,letterSpacing: 1),),))
-                                  );
-                                }, icon: Icon(Icons.delete,color: Colors.red,)),
-                                IconButton(onPressed: (){
-                                  Navigator.of(context).push(MaterialPageRoute(builder:(context) => EditTeacher(),));
-                                }, icon: Icon(Icons.edit,color: Colors.indigoAccent[400],)),
-                              ],
-                            ),
-                          ),);
-                    }
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CoursePage(TeacherId: instructors[index]['id'], depWhatsApp: depWhatsApp, depTelegram: depTelegram),));
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -95,14 +80,20 @@ class _TeachersState extends State<Teachers> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10),
-                          child: ClipOval(child: Image.network(TeacherInfo[index]['image'], width: 100, height: 100)),
+                          child: ClipOval(child: CachedNetworkImage(
+                            imageUrl: instructors[index]['image'],
+                            width: 100,
+                            height: 100,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          )),
                         ),
-                      Text(
-                        TeacherInfo[index]['title'],
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6))),
+                        Text(
+                            instructors[index]['title'],
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6))),
                         const SizedBox(height: 3),
                         Text(
-                          TeacherInfo[index]['name'],
+                          instructors[index]['name'],
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6)),
                         ),
                       ],
@@ -110,36 +101,23 @@ class _TeachersState extends State<Teachers> {
                   ),
                 );
               },
-            ):Center(child: Column(
-              children: [
-                SizedBox(height: 200,),
-                CircularProgressIndicator(),
-              ],
-            )),
+            ) : CustomLoadingIndicator(),
           ),
         ],
       ),
     );
   }
-  Future<List<dynamic>> getTeacher() async {
+
+  Future<Map<String, dynamic>?> getTeacher() async {
     try {
-    var response = await ApiClient().getAuthenticatedRequest(context, "/api/Instructor");
-    final List<dynamic> TeacherList=json.decode(response!.body);
-    // Check the response
-    if (response.statusCode == 200)
-      {
-        print(response.body);
-        print(TeacherList[0]['name']);
-        return TeacherList;
+      var response = await ApiClient().getAuthenticatedRequest(context, "/api/Departments/instructors/${widget.departmentId}");
+      if (response?.statusCode == 200) {
+        return json.decode(response!.body);
+      } else {
+        return null;
       }
-    else
-      {
-        return [];
-      }
-    }catch (e)
-    {
-      return [];
+    } catch (e) {
+      return null;
     }
   }
-
 }
