@@ -48,7 +48,9 @@ class ProjctViewScile extends StatelessWidget
 
                   ],
                 ),
-              ):SizedBox.shrink(),
+              ):Text(
+                  "     ",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
               const SizedBox(height:15,),
               Text("For more details contact with ",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
               const SizedBox(height:15,),

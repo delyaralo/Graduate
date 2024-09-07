@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _fetchShowPrice(); // Fetch the showPrice value when the app starts
+    //_fetchShowPrice(); // Fetch the showPrice value when the app starts
   }
   @override
   Widget build(BuildContext context) {

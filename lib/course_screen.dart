@@ -180,7 +180,9 @@ class _CourseScreenState extends State<CourseScreen> {
                       ? showPrice==true ?Text(
                     widget.price + "  :  السعر ",
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ):SizedBox.shrink()
+                  ):Text(
+                      "     ",
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black))
                       : Text(
                     " مجاناً ",
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),

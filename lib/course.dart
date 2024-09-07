@@ -104,7 +104,9 @@ class _CourseState extends State<Course> {
                   showPrice==true ? Text(
                     CourseInfo[index]['price'].toString(),
                     style: TextStyle(fontSize: 15, fontWeight:  FontWeight.bold),
-                  ):SizedBox.shrink()
+                  ):Text(
+                      "     ",
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
                 ],
               ),
             ),

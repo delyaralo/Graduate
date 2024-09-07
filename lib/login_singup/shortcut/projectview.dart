@@ -108,7 +108,9 @@ class _ProjectViewState extends State<ProjectView> {
                   showPrice == true ? Text(
                     ProjectInfo[index]['price'].toString(),
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black),
-                  ):SizedBox.shrink(),
+                  ):Text(
+                      "     ",
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
                   Text(
                     "اضافة",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigoAccent[400]),
