@@ -11,7 +11,8 @@ class ProjctViewScile extends StatelessWidget
   final String img;
   final String projectdescription;
   final String title;
-  const ProjctViewScile({super.key, required this.img, required this.projectdescription, required this.price, required this.title});
+  final showPrice;
+   ProjctViewScile({super.key, required this.img, required this.projectdescription, required this.price, required this.title, this.showPrice});
   @override
   Widget build(BuildContext context)
   {

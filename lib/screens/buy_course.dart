@@ -8,7 +8,8 @@ class BuyCourse extends StatelessWidget
   final String price;
   final String title;
   final String depWhatsApp;
-  const BuyCourse({super.key, required this.price, required this.title, required this.depWhatsApp});
+  final bool showPrice;
+  BuyCourse({super.key, required this.price, required this.title, required this.depWhatsApp, required this.showPrice});
   @override
   Widget build(BuildContext context)
   {

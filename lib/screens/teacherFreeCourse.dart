@@ -73,7 +73,7 @@ class _TeachersState extends State<TeachersFreeCourse> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => FreeCourse(TeacherId:TeacherInfo[index]['id']),));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => FreeCourse(teacherId:TeacherInfo[index]['id']),));
                   },
                   onLongPress: (){
                     if(isadmin)
@@ -100,7 +100,7 @@ class _TeachersState extends State<TeachersFreeCourse> {
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: const Color(0xFFF5F3FF),
+                      color: containerTheme,
                     ),
                     child: Column(
                       children: [

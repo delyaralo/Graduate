@@ -4,6 +4,8 @@ import '../add_data/new_project.dart';
 import '../login_singup/shortcut/projectview.dart';
 import '../screens/appBar.dart';
 class Projects extends StatelessWidget {
+  final bool showPrice;
+  const Projects({super.key, required this.showPrice});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +22,7 @@ class Projects extends StatelessWidget {
       body: ListView(
         children: [
           SizedBox(height: 20),
-          ProjectView(check: true),
+          ProjectView(check: true,showPrice:showPrice,),
         ],
       ),
       floatingActionButton:isadmin? FloatingActionButton(

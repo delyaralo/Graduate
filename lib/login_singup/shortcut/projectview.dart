@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graduate/login_singup/auth/login.dart';
@@ -10,94 +9,128 @@ import 'package:http/http.dart' as http;
 
 import '../../splashScreen/customLoadingIndicator.dart';
 import '../auth/token_manager.dart';
-class ProjectView extends StatefulWidget
-{
+
+class ProjectView extends StatefulWidget {
   final bool check;
-  const ProjectView({super.key,required this.check});
+  final showPrice;
+
+  const ProjectView({super.key, required this.check, required this.showPrice});
+
   @override
   State<ProjectView> createState() => _ProjectViewState();
 }
 
 class _ProjectViewState extends State<ProjectView> {
-
   late List<dynamic> ProjectInfo;
-  late bool isloaded=false;
-  late bool isempty =false;
-  void initState()
-  {
+  late bool isloaded = false;
+  late bool isempty = false;
+
+  @override
+  void initState() {
     super.initState();
     _loadTeacherInfo();
   }
+
   Future<void> _loadTeacherInfo() async {
     final teacherInfo = await getProjects();
     if (teacherInfo.isNotEmpty) {
       setState(() {
         ProjectInfo = teacherInfo;
-      });
-      setState(() {
-        isloaded=true;
+        isloaded = true;
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return  Center(
-      child: isloaded?GridView.builder(
-        itemCount:widget.check==true?ProjectInfo.length:4,
+    final screenSize = MediaQuery.of(context).size;
+    final crossAxisCount = screenSize.width < 600 ? 2 : 3;  // Dynamically set crossAxisCount based on screen width
+    final childAspectRatio = (screenSize.width / crossAxisCount) / (screenSize.height / 3);  // Dynamic aspect ratio
+
+    return Center(
+      child: isloaded
+          ? GridView.builder(
+        itemCount: widget.check == true ? ProjectInfo.length : 4,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: (MediaQuery.of(context).size.height - 75) / 960,
+          crossAxisCount: crossAxisCount,  // Dynamic crossAxisCount
+          childAspectRatio: childAspectRatio,  // Dynamic aspect ratio
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>ProjctViewScile(img: ProjectInfo[index]['image'], projectdescription:ProjectInfo[index]['description'],price: ProjectInfo[index]['price'].toString(), title: ProjectInfo[index]['title'],) ,));
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ProjctViewScile(
+                  img: ProjectInfo[index]['image'],
+                  projectdescription: ProjectInfo[index]['description'],
+                  price: ProjectInfo[index]['price'].toString(),
+                  title: ProjectInfo[index]['title'],
+                  showPrice: widget.showPrice,
+                ),
+              ));
             },
-            onLongPress: (){
-              if(isadmin)
-              {
-                showDialog(context: context, builder: (context) =>
-                    AlertDialog(
-                      content: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(onPressed:(){
-                            showDialog(context: context, builder: (context) =>
-                                AlertDialog(content: MaterialButton(onPressed: (){},child: Text("تاكيد الحذف",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,letterSpacing: 1),),))
+            onLongPress: () {
+              if (isadmin) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: MaterialButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    "تاكيد الحذف",
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1),
+                                  ),
+                                ),
+                              ),
                             );
-                          }, icon: Icon(Icons.delete,color: Colors.red,)),
-                          IconButton(onPressed: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder:(context) => EditProject(),));
-                          }, icon: Icon(Icons.edit,color: Colors.indigoAccent[400],)),
-                        ],
-                      ),
-                    ),);
+                          },
+                          icon: Icon(Icons.delete, color: Colors.red),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EditProject(),
+                              ),
+                            );
+                          },
+                          icon: Icon(Icons.edit, color: Colors.indigoAccent[400]),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               }
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: const Color(0xFFF5F3FF),
+                color: containerTheme,
               ),
               child: Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child:CachedNetworkImage(
+                    child: CachedNetworkImage(
                       imageUrl: ProjectInfo[index]['image'],
                       width: 80,
                       height: 80,
                       fit: BoxFit.fill,
                       placeholder: (context, url) => CircularProgressIndicator(),
                       errorWidget: (context, url, error) => Icon(Icons.error),
-                    )
-                    ,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -105,33 +138,35 @@ class _ProjectViewState extends State<ProjectView> {
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   const SizedBox(height: 10),
-                  showPrice == true ? Text(
-                    ProjectInfo[index]['price'].toString(),
+                  widget.showPrice == true
+                      ? Text(
+                    "${ProjectInfo[index]['price']} IQD",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  )
+                      : Text(
+                    "     ",
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black),
-                  ):Text(
-                      "     ",
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
-                  Text(
-                    "اضافة",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigoAccent[400]),
                   ),
                 ],
               ),
             ),
           );
         },
-      ):CustomLoadingIndicator(),
+      )
+          : CustomLoadingIndicator(),
     );
   }
+
   Future<List<dynamic>> getProjects() async {
     try {
-      var response = await ApiClient().getAuthenticatedRequest(context,"/api/Projects");
+      var response = await ApiClient().getAuthenticatedRequest(context, "/api/Projects");
       if (response!.statusCode == 200) {
         final List<dynamic> ProjectsList = json.decode(response.body);
         return ProjectsList;
-      } else {// Handle the case where the request was not successful
+      } else {
+        // Handle the case where the request was not successful
         setState(() {
-          isempty=true;
+          isempty = true;
         });
         return [response.statusCode];
       }

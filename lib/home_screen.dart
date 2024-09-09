@@ -1,13 +1,6 @@
-import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart'; // أضف هذا السطر
 import 'package:flutter/material.dart';
 import 'package:graduate/course.dart';
-import 'package:graduate/course_page/category.dart';
-import 'package:graduate/course_page/free_coures.dart';
-import 'package:graduate/course_page/meet.dart';
-import 'package:graduate/course_page/mlazm.dart';
 import 'package:graduate/course_page/projects.dart';
-import 'package:graduate/main.dart';
 import 'package:graduate/screens.dart';
 import 'package:graduate/screens/appBar.dart';
 import 'package:graduate/screens/teacherFreeCourse.dart';
@@ -17,7 +10,8 @@ class HomePage extends StatefulWidget {
   final List<String> catNames;
   final List<Color> catColors;
   final List<Icon> catIcons;
-  const HomePage({super.key, required this.catNames, required this.catColors, required this.catIcons});
+  final bool showPrice;
+  const HomePage({super.key, required this.catNames, required this.catColors, required this.catIcons, required this.showPrice});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -73,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                             );
                           } else if (index == 2) {
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => Projects()),
+                              MaterialPageRoute(builder: (context) => Projects(showPrice:widget.showPrice)),
                             );
                           }
                         },
@@ -113,7 +107,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 10),
               // استخدام CachedNetworkImage هنا بدلاً من Image.network
-              const Course(),
+              Course(showPrice: widget.showPrice),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       setState(() {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Projects()),
+                          MaterialPageRoute(builder: (context) => Projects(showPrice:widget.showPrice,)),
                         );
                       });
                     },
@@ -138,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               const SizedBox(height: 10),
-              const ProjectView(check: false)
+               ProjectView(check: false,showPrice:widget.showPrice)
             ],
           ),
         ),

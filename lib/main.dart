@@ -12,7 +12,7 @@ Color mainColors = ThemeColors.primary;
 Color mainDarkTheme = ThemeColors.darkBackground;
 Color mainDarkgray = ThemeColors.darkgray;
 Color mainwhitetheme = ThemeColors.whitetheme;
-bool showPrice = false;
+Color containerTheme = ThemeColors.ContainerTheme;
 void main() async {
   runApp(MyApp());
 }
@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //_fetchShowPrice(); // Fetch the showPrice value when the app starts
+    // Fetch the showPrice value when the app starts
   }
   @override
   Widget build(BuildContext context) {
@@ -44,26 +44,5 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Future<void> _fetchShowPrice() async {
-    try {
-      var response = await ApiClient().getAuthenticatedRequest(context, "/api/AppleStore/info");
-      if (response!.statusCode == 200) {
-        final bool price = json.decode(response.body);
-        setState(() {
-          showPrice = price;
-        });
-      } else {
-        // Handle the case where the request was not successful
-        setState(() {
-          showPrice = true; // Default value or handle error appropriately
-        });
-      }
-    } catch (e) {
-      // Handle any exceptions that occur during the request
-      print("Error fetching showPrice: $e");
-      setState(() {
-        showPrice = true; // Default value or handle error appropriately
-      });
-    }
-  }
+
 }

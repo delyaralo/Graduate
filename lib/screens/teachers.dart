@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:graduate/course_page/coures_page.dart';
 import '../login_singup/auth/token_manager.dart';
+import '../main.dart';
 import '../splashScreen/customLoadingIndicator.dart';
 import 'appBar.dart';
 
 class Teachers extends StatefulWidget {
   final String departmentId;
-
-  Teachers({super.key, required this.departmentId});
+  final bool showPrice;
+  Teachers({super.key, required this.departmentId, required this.showPrice});
   @override
   State<Teachers> createState() => _TeachersState();
 }
@@ -68,13 +69,13 @@ class _TeachersState extends State<Teachers> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CoursePage(TeacherId: instructors[index]['id'], depWhatsApp: depWhatsApp, depTelegram: depTelegram),));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => CoursePage(TeacherId: instructors[index]['id'], depWhatsApp: depWhatsApp, depTelegram: depTelegram,showPrice:widget.showPrice),));
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: const Color(0xFFF5F3FF),
+                      color: containerTheme,
                     ),
                     child: Column(
                       children: [

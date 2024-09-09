@@ -6,7 +6,8 @@ class CoursePage extends StatelessWidget {
   final String TeacherId;
   final String depWhatsApp;
   final String depTelegram;
-  const CoursePage({super.key, required this.TeacherId, required this.depWhatsApp, required this.depTelegram});
+  final bool showPrice;
+  const CoursePage({super.key, required this.TeacherId, required this.depWhatsApp, required this.depTelegram, required this.showPrice});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +27,7 @@ class CoursePage extends StatelessWidget {
           },
           child:Icon(Icons.add,),
         ):null,
-        body:PageCourses(TeacherId:TeacherId, depWhatsApp: depWhatsApp, depTelegram:depTelegram,)
+        body:PageCourses(TeacherId:TeacherId, depWhatsApp: depWhatsApp, depTelegram:depTelegram,showPrice:showPrice)
     );
   }
 }

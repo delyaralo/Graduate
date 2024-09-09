@@ -6,4 +6,5 @@ class ThemeColors {
   static const Color darkBackground = Color(0xff00161E);
   static const Color darkgray = Color(0xff343434);
   static const Color whitetheme = Colors.white;
+  static const Color ContainerTheme=Color(0xffE1F3F5);
 }

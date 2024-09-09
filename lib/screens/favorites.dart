@@ -70,14 +70,14 @@ class _Favorites extends State<Favorites> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CourseScreen(CourseId:CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: false,price: CourseInfo[index]['price'].toString(),description: CourseInfo[index]['description'], depWhatsApp: '07748687725', trailerVideo: CourseInfo[index]['trailerVideo'],)),
+                    MaterialPageRoute(builder: (context) => CourseScreen(CourseId:CourseInfo[index]['id'], Courseimage: CourseInfo[index]['image'], Coursetitle: CourseInfo[index]['title'], lock: false,price: CourseInfo[index]['price'].toString(),description: CourseInfo[index]['description'], depWhatsApp: '07748687725', trailerVideo: CourseInfo[index]['trailerVideo'], showPrice: false,)),
                   );
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: const Color(0xFFF5F3FF),
+                    color:containerTheme,
                   ),
                   child: Column(
                     children: [

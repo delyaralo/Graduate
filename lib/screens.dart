@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:flutter/material.dart';
 import 'package:graduate/login_singup/auth/login.dart';
@@ -7,6 +9,7 @@ import 'package:graduate/screens/favorites.dart';
 import 'package:graduate/screens/profile.dart';
 import 'add_data/new_teacher.dart';
 import 'home_screen.dart';
+import 'login_singup/auth/token_manager.dart';
 
 class Screens extends StatefulWidget {
   int currentindex;
@@ -17,6 +20,7 @@ class Screens extends StatefulWidget {
 }
 
 class _Screens extends State<Screens> {
+  bool showPrice = false;  // Set to false by default to prevent red screen
   List<String> teachers_name = [
     "حسين خريج",
   ];
@@ -57,18 +61,21 @@ class _Screens extends State<Screens> {
   void initState() {
     super.initState();
     AutoOrientation.portraitUpMode();
+    _fetchShowPrice();  // Fetch data in initState
   }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> widgetpages = [
-      HomePage(catNames: catNames, catColors: catColors, catIcons: catIcons),
-      Department(),
+      HomePage(catNames: catNames, catColors: catColors, catIcons: catIcons, showPrice: showPrice),
+      Department(showPrice: showPrice),
       Favorites(),
       Profile(),
     ];
+
     return Scaffold(
-      appBar:widget.currentindex!=0 ? AppBar(
+      appBar: widget.currentindex != 0
+          ? AppBar(
         foregroundColor: Colors.black,
         backgroundColor: Colors.grey[50],
         elevation: 0,
@@ -77,12 +84,20 @@ class _Screens extends State<Screens> {
           appBarTitle[widget.currentindex],
           style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
         ),
-      ):null,
-      body: widgetpages.elementAt(widget.currentindex),
+      )
+          : null,
+      body: showPrice == null
+          ? Center(child: CircularProgressIndicator())  // Show loading if data not yet fetched
+          : widgetpages.elementAt(widget.currentindex),  // Show content if data is fetched
       floatingActionButton: widget.currentindex == 1 && isadmin
           ? FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => NewTeacher(),));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewTeacher(),
+            ),
+          );
         },
         child: Icon(Icons.add),
         backgroundColor: mainColors,
@@ -104,7 +119,6 @@ class _Screens extends State<Screens> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: appBarTitle[0],
-
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
@@ -121,5 +135,26 @@ class _Screens extends State<Screens> {
         ],
       ),
     );
+  }
+
+  Future<void> _fetchShowPrice() async {
+    try {
+      var response = await ApiClient().getAuthenticatedRequest(context, "/api/AppleStore/info");
+      if (response!.statusCode == 200) {
+        final bool price = json.decode(response.body);
+        setState(() {
+          showPrice = price;
+        });
+      } else {
+        setState(() {
+          showPrice = true; // Default value or handle error appropriately
+        });
+      }
+    } catch (e) {
+      print("Error fetching showPrice: $e");
+      setState(() {
+        showPrice = true; // Default value or handle error appropriately
+      });
+    }
   }
 }

@@ -15,7 +15,8 @@ import '../splashScreen/customLoadingIndicator.dart';
 import 'appBar.dart';
 
 class Department extends StatefulWidget {
-  const Department({super.key});
+  final bool showPrice;
+   Department({super.key, required this.showPrice});
 
   @override
   State<Department> createState() => _DepartmentState();
@@ -64,14 +65,14 @@ class _DepartmentState extends State<Department> {
                 return InkWell(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => Teachers(departmentId: departmentInfo[index]['id']),
+                      builder: (context) => Teachers(departmentId: departmentInfo[index]['id'],showPrice:widget.showPrice),
                     ));
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: const Color(0xFFF5F3FF),
+                      color: containerTheme,
                     ),
                     child: Column(
                       children: [

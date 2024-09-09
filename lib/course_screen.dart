@@ -23,8 +23,9 @@ class CourseScreen extends StatefulWidget {
   final String description;
   final String depWhatsApp;
   final String trailerVideo;
+  final bool showPrice;
   // ignore: non_constant_identifier_names
-  const CourseScreen({
+   CourseScreen({
     super.key,
     required this.CourseId,
     required this.Courseimage,
@@ -34,6 +35,7 @@ class CourseScreen extends StatefulWidget {
     required this.description,
     required this.depWhatsApp,
     required this.trailerVideo,
+    required this.showPrice,
 
   });
 
@@ -177,7 +179,7 @@ class _CourseScreenState extends State<CourseScreen> {
                 Center(
                   child: widget.lock
                       ? int.parse(widget.price) != 0
-                      ? showPrice==true ?Text(
+                      ? widget.showPrice==true ?Text(
                     widget.price + "  :  السعر ",
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ):Text(
@@ -196,7 +198,7 @@ class _CourseScreenState extends State<CourseScreen> {
                       if (0 < int.parse(widget.price)) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => BuyCourse(price: widget.price, title: widget.Coursetitle, depWhatsApp:widget.depWhatsApp),
+                            builder: (context) => BuyCourse(price: widget.price, title: widget.Coursetitle, depWhatsApp:widget.depWhatsApp,showPrice:widget.showPrice),
                           ),
                         );
                       } else {
