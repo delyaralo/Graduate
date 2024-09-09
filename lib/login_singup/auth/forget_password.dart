@@ -40,7 +40,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 Container(height: 10,),
                 Text("البريد",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:mainwhitetheme),),
                 Container(height: 10,),
-                CustomTextFormField(hinttext: "ادخل الحساب هنا",mycontroler:Forget_Password ,check: false, number: false,isvalidator: true),
+                CustomTextFormField(hinttext: "ادخل الحساب هنا",mycontroller:Forget_Password ,check: false, number: false,isvalidator: true),
                 Container(height: 10,),
                 custombutton(onPressed: () async {
                   try {

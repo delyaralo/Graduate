@@ -12,7 +12,7 @@ Color mainColors = ThemeColors.primary;
 Color mainDarkTheme = ThemeColors.darkBackground;
 Color mainDarkgray = ThemeColors.darkgray;
 Color mainwhitetheme = ThemeColors.whitetheme;
-bool showPrice = true;
+bool showPrice = false;
 void main() async {
   runApp(MyApp());
 }

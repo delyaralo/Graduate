@@ -58,7 +58,7 @@ class _Login extends State<Login>
                     Container(height: 20,),
                     Text("البريد",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: mainwhitetheme),),
                     Container(height: 10,),
-                    CustomTextFormField(hinttext: "ادخل البريد هنا",mycontroler:Email ,check: false, number: false,isvalidator: true),
+                    CustomTextFormField(hinttext: "ادخل البريد هنا",mycontroller:Email ,check: false, number: false,isvalidator: true),
                     Container(height: 10,),
                     Text("كلمة السر",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: mainwhitetheme),),
                     Container(height: 10,),

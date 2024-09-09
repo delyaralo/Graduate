@@ -8,8 +8,8 @@ class CustomTextFormField extends StatelessWidget
   final bool check;
   final bool isvalidator;
   final String hinttext;
-  final TextEditingController mycontroler;
-  const CustomTextFormField({super.key, required this.hinttext ,required this.mycontroler, required this.check, required this.number, required this.isvalidator});
+  final TextEditingController mycontroller;
+  const CustomTextFormField({super.key, required this.hinttext ,required this.mycontroller, required this.check, required this.number, required this.isvalidator});
   @override
   Widget build (BuildContext context)
   {
@@ -27,7 +27,7 @@ class CustomTextFormField extends StatelessWidget
           return null;
       }:null,
       obscureText: check,
-      controller: mycontroler,
+      controller: mycontroller,
         keyboardType:number==true?  TextInputType.number:null,
       decoration: InputDecoration(
           hintText: hinttext,
