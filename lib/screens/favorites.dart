@@ -74,7 +74,7 @@ class _Favorites extends State<Favorites> {
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                    padding: EdgeInsets.only( top:10,right: 10,left: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color:containerTheme,
