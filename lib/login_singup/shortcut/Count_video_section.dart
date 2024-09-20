@@ -58,39 +58,74 @@ class _CountVideoSection extends State<CountVideoSection> {
             ),
             title: Text('مقدمة الدورة'),
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => VideoPlayer(url:widget.trailerVideo,phone_number:''),));
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => VideoPlayer(
+                  url: widget.trailerVideo,
+                  phone_number: '',
+                ),
+              ));
             },
           ),
-        ListView.builder(
+        // Use ListView.separated for gradient separator
+        ListView.separated(
           itemCount: isempty ? 0 : VideosInfo.length,
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
+            final video = VideosInfo[index];
             return ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                     color: mainColors, shape: BoxShape.circle),
-                child: widget.lock
+                child: video['isFree']  ? Icon(Icons.play_arrow_rounded, color: mainwhitetheme, size: 30) :widget.lock
                     ? Icon(Icons.lock, color: mainwhitetheme, size: 30)
                     : Icon(Icons.play_arrow_rounded, color: mainwhitetheme, size: 30),
               ),
-              title: Text(VideosInfo[index]['title']),
-              onTap: () {
-                // Handle video tap
+              title: Text(video['title'],style: TextStyle(fontWeight: FontWeight.bold),),
+              onTap: video['isFree']  ? () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => VideoPlayer(
+                    url: video['link'],
+                    phone_number: widget.phone_number,
+                  ),
+                ));
+              } : widget.lock
+                  ? null
+                  : () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => VideoPlayer(
+                    url: video['link'],
+                    phone_number: widget.phone_number,
+                  ),
+                ));
               },
             );
           },
+          separatorBuilder: (context, index) {
+            return Container(
+              height: 1, // سمك الخط الفاصل
+              margin: EdgeInsets.symmetric(vertical: 10), // المسافة بين العناصر والخط
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xff32DDE6), Color(0xff2D3479)], // ألوان التدرج
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            );
+          },
         ),
-        Container(
-          child: isempty
-              ? const Center(
+        if (isempty)
+          Container(
+            padding: EdgeInsets.all(16),
+            child: const Center(
               child: Text(
-                "لا توجد فديوات",
+                "قَرِيبًا",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ))
-              : null,
-        ),
+              ),
+            ),
+          ),
       ],
     )
         : CustomLoadingIndicator();

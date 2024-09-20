@@ -2,14 +2,18 @@ import 'dart:convert';
 
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:graduate/login_singup/auth/login.dart';
 import 'package:graduate/main.dart';
 import 'package:graduate/screens/department.dart';
 import 'package:graduate/screens/favorites.dart';
 import 'package:graduate/screens/profile.dart';
+import 'package:graduate/themee/theme_notifier.dart';
+import 'package:provider/provider.dart';
 import 'add_data/new_teacher.dart';
 import 'home_screen.dart';
 import 'login_singup/auth/token_manager.dart';
+
 
 class Screens extends StatefulWidget {
   int currentindex;
@@ -20,7 +24,8 @@ class Screens extends StatefulWidget {
 }
 
 class _Screens extends State<Screens> {
-  bool showPrice = false;  // Set to false by default to prevent red screen
+  bool showPrice = false;
+  // Set to false by default to prevent red screen
   List<String> teachers_name = [
     "حسين خريج",
   ];
@@ -36,18 +41,14 @@ class _Screens extends State<Screens> {
   List<String> catNames = [
     "الاقسام",
     "الدورات المجانية",
-    "المشاريع",
-  ];
-  List<Color> catColors = [
-    const Color(0xFF6fe08d),
-    const Color(0xFF61BDFD),
-    const Color(0xFF78E667),
+    "المنتجات",
   ];
 
+
   List<Icon> catIcons = [
-    const Icon(Icons.video_library, color: Colors.white, size: 30),
-    const Icon(Icons.store, color: Colors.white, size: 30),
-    const Icon(Icons.emoji_events, color: Colors.white, size: 30),
+    const Icon(Icons.category, color: Colors.white, size: 30), // for الاقسام
+    const Icon(Icons.school, color: Colors.white, size: 30),   // for الدورات المجانية
+    const Icon(Icons.store_sharp, color: Colors.white, size: 30), // for المشاريع
   ];
 
   void addteacher(String name, String img) {
@@ -66,74 +67,143 @@ class _Screens extends State<Screens> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+    List<Color> catColors = [
+      themeNotifier.customThemeIndex==3 ? Color(0xffFF758F) : Color(0xFF2BB8A7),
+      themeNotifier.customThemeIndex==3 ? Color(0xffC9184A) : Color(0xFF28A8AF),
+      themeNotifier.customThemeIndex==3 ? Color(0xffFF4D6D) : Color(0xFF247D95),
+    ];
+
+    bool isLightMode = themeNotifier.themeMode == ThemeMode.light;
+    bool isBlueMode = themeNotifier.themeMode == ThemeMode.system;
+    Color Selecteditem = isBlueMode ? Colors.blue:Theme.of(context).primaryColor;
+    Color unSelecteditem =isBlueMode ? Colors.white : themeNotifier.customThemeIndex == 3 ? Color(0xffFFF0F3) :isLightMode ?  Colors.grey : Colors.white  ;
     List<Widget> widgetpages = [
       HomePage(catNames: catNames, catColors: catColors, catIcons: catIcons, showPrice: showPrice),
-      Department(showPrice: showPrice),
-      Favorites(),
-      Profile(),
+      Department(showPrice: showPrice,appBarTitle:appBarTitle[widget.currentindex]),
+      Favorites(appBarTitle:appBarTitle[widget.currentindex]),
+      Profile(appBarTitle:appBarTitle[widget.currentindex]),
     ];
 
     return Scaffold(
-      appBar: widget.currentindex != 0
-          ? AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.grey[50],
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          appBarTitle[widget.currentindex],
-          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
-        ),
-      )
-          : null,
+      backgroundColor: mainwhitetheme,
       body: showPrice == null
           ? Center(child: CircularProgressIndicator())  // Show loading if data not yet fetched
           : widgetpages.elementAt(widget.currentindex),  // Show content if data is fetched
-      floatingActionButton: widget.currentindex == 1 && isadmin
-          ? FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NewTeacher(),
+      bottomNavigationBar: Container(
+        decoration:isLightMode ?null:
+        BoxDecoration(
+          gradient:  LinearGradient(
+            colors: [
+              isBlueMode ? Color(0xFF0B1320):Color(0xff00161a),  // لون بداية التدرج
+              isBlueMode ? Color(0xFF0B1340): mainDarkTheme, // لون نهاية التدرج
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),  // في الوضع الفاتح، استخدم لون ثابت بدلاً من التدرج
+            // حدد لون الخلفية في الوضع الفاتح
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: isLightMode ? null : Colors.transparent,  // الحفاظ على الخلفية الشفافة لعرض الـ gradient
+          showUnselectedLabels: true,
+          iconSize: MediaQuery.of(context).size.width * 0.1,  // الحجم الديناميكي للأيقونات بناءً على عرض الشاشة
+          selectedItemColor: Selecteditem,
+          selectedFontSize: MediaQuery.of(context).size.width * 0.045,  // حجم الخط الديناميكي بناءً على عرض الشاشة
+          unselectedItemColor: unSelecteditem,
+          currentIndex: widget.currentindex,
+          onTap: (index) {
+            setState(() {
+              widget.currentindex = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                      if (widget.currentindex == 0) // عرض الخط الأزرق فقط إذا كانت هذه الصفحة هي المختارة
+                    Container(
+                    width: MediaQuery.of(context).size.width * 0.08,
+                height: 3,  // سماكة الخط الأزرق
+                color: widget.currentindex == 0 ? Selecteditem : unSelecteditem,  // اللون الأزرق للخط
+                    ),
+                  SvgPicture.asset(
+                    'images/home.svg',  // المسار إلى الأيقونة بصيغة SVG
+                    width: MediaQuery.of(context).size.width * 0.1,  // الحجم الديناميكي للأيقونة
+                    height: MediaQuery.of(context).size.width * 0.1,
+                    color: widget.currentindex == 0 ? Selecteditem : unSelecteditem,
+                  ),
+
+                ],
+              ),
+              label: appBarTitle[0],
             ),
-          );
-        },
-        child: Icon(Icons.add),
-        backgroundColor: mainColors,
-      )
-          : null,
-      bottomNavigationBar: BottomNavigationBar(
-        showUnselectedLabels: true,
-        iconSize: 32,
-        selectedItemColor: mainColors,
-        selectedFontSize: 18,
-        unselectedItemColor: Colors.grey,
-        currentIndex: widget.currentindex,
-        onTap: (index) {
-          setState(() {
-            widget.currentindex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: appBarTitle[0],
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: appBarTitle[1],
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.ondemand_video),
-            label: appBarTitle[2],
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: appBarTitle[3],
-          ),
-        ],
+            BottomNavigationBarItem(
+              icon: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.currentindex == 1)
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.08,
+                      height: 3,
+                      color: widget.currentindex == 1 ? Selecteditem : unSelecteditem,
+                    ),
+                  SvgPicture.asset(
+                    'images/department.svg',
+                    width: MediaQuery.of(context).size.width * 0.1,
+                    height: MediaQuery.of(context).size.width * 0.1,
+                    color: widget.currentindex == 1 ? Selecteditem : unSelecteditem,
+                  ),
+
+                ],
+              ),
+              label: appBarTitle[1],
+            ),
+            BottomNavigationBarItem(
+              icon: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.currentindex == 2)
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.08,
+                      height: 3,
+                      color: widget.currentindex == 2 ? Selecteditem : unSelecteditem,
+                    ),
+                  SvgPicture.asset(
+                    'images/video_courses.svg',
+                    width: MediaQuery.of(context).size.width * 0.09,
+                    height: MediaQuery.of(context).size.width * 0.09,
+                    color: widget.currentindex == 2 ? Selecteditem : unSelecteditem,
+                  ),
+
+                ],
+              ),
+              label: appBarTitle[2],
+            ),
+            BottomNavigationBarItem(
+              icon: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.currentindex == 3)
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.08,
+                      height: 3,
+                      color: widget.currentindex == 3 ? Selecteditem : unSelecteditem,
+                    ),
+                  Icon(
+                    Icons.person,
+                    size: MediaQuery.of(context).size.width * 0.1,
+                    color: widget.currentindex == 3 ? Selecteditem : unSelecteditem,
+                  ),
+                ],
+              ),
+              label: appBarTitle[3],
+            ),
+          ],
+        )
       ),
+
     );
   }
 

@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:graduate/login_singup/auth/login.dart';
-import '../../Edit/edit_project.dart';
+import 'package:provider/provider.dart';
+import '../../course_page/shortcut/customBoxDocoration.dart';
+import '../../course_page/shortcut/customCard.dart';
 import '../../course_page/shortcut/projectview.dart';
 import '../../main.dart';
-import 'package:http/http.dart' as http;
-
+import '../../screens/buy_course.dart';
 import '../../splashScreen/customLoadingIndicator.dart';
+import '../../themee/theme_notifier.dart';
 import '../auth/token_manager.dart';
 
 class ProjectView extends StatefulWidget {
@@ -24,38 +24,40 @@ class _ProjectViewState extends State<ProjectView> {
   late List<dynamic> ProjectInfo;
   late bool isloaded = false;
   late bool isempty = false;
-
   @override
   void initState() {
     super.initState();
     _loadTeacherInfo();
   }
-
   Future<void> _loadTeacherInfo() async {
-    final teacherInfo = await getProjects();
-    if (teacherInfo.isNotEmpty) {
+    final Project_Info = await getProjects();
+    if (Project_Info.isNotEmpty) {
       setState(() {
-        ProjectInfo = teacherInfo;
+        ProjectInfo = Project_Info;
         isloaded = true;
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     final screenSize = MediaQuery.of(context).size;
-    final crossAxisCount = screenSize.width < 600 ? 2 : 3;  // Dynamically set crossAxisCount based on screen width
-    final childAspectRatio = (screenSize.width / crossAxisCount) / (screenSize.height / 3);  // Dynamic aspect ratio
+
+    // تحديد عدد الأعمدة بناءً على عرض الشاشة
+    final crossAxisCount = screenSize.width < 600 ? 2 : 3;
+
+    // حساب نسبة العرض إلى الارتفاع ديناميكيًا
+    final childAspectRatio = (screenSize.width / crossAxisCount) / (screenSize.height / (widget.showPrice ? 2.5 : 3)); // تعديل بسيط إذا كان السعر مخفيًا
 
     return Center(
       child: isloaded
           ? GridView.builder(
-        itemCount: widget.check == true ? ProjectInfo.length : 4,
+        itemCount: 2,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,  // Dynamic crossAxisCount
-          childAspectRatio: childAspectRatio,  // Dynamic aspect ratio
+          crossAxisCount: crossAxisCount,  // عدد الأعمدة ديناميكي
+          childAspectRatio: childAspectRatio,  // نسبة العرض إلى الارتفاع ديناميكي
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
         ),
@@ -69,85 +71,76 @@ class _ProjectViewState extends State<ProjectView> {
                   price: ProjectInfo[index]['price'].toString(),
                   title: ProjectInfo[index]['title'],
                   showPrice: widget.showPrice,
+                  trailerVideo: ProjectInfo[index]['trailerVideo'],
+                  contact: '07748687725-g_raduate-g_raduate',
+                  showTrialerViedo: true,
                 ),
               ));
             },
-            onLongPress: () {
-              if (isadmin) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                content: MaterialButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    "تاكيد الحذف",
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1),
+            child: Card(
+              elevation: 8, // ظل للكارد
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20), // زاوية حواف الكارد
+              ),
+              child: Container(
+                decoration: CustomBoxDecoration(
+                  context,
+                  themeNotifier.customThemeIndex == 3 ? Color(0xffFF4D6D) : teacherThemeBegin,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // محاذاة المحتوى في المنتصف
+                  crossAxisAlignment: CrossAxisAlignment.center, // محاذاة المحتوى أفقيًا في المنتصف
+                  children: [
+                    CustomCard(
+                      imageUrl: ProjectInfo[index]['image']!,
+                      title: ProjectInfo[index]['title']!,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0), // مساحة بينية من الأسفل
+                      child: widget.showPrice
+                          ? Column(
+                        children: [
+                          Text(
+                            ProjectInfo[index]['price'].toString() + " IQD",
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          widget.check == true ? ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => BuyCourse(
+                                    price: ProjectInfo[index]['price'].toString(),
+                                    title: ProjectInfo[index]['title'],
+                                    contact: "07748687725-g_raduate-g_raduate",
+                                    showPrice: true,
+                                    image: ProjectInfo[index]['image']!,
                                   ),
                                 ),
+                              );
+                            },
+                            child: Text(
+                              "شراء",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                            );
-                          },
-                          icon: Icon(Icons.delete, color: Colors.red),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => EditProject(),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: mainColors, // لون خلفية الزر
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0), // حواف الزر مستديرة
                               ),
-                            );
-                          },
-                          icon: Icon(Icons.edit, color: Colors.indigoAccent[400]),
-                        ),
-                      ],
+                            ),
+                          ):Text(" "),
+                        ],
+                      )
+                          : const SizedBox.shrink(), // إذا تم إخفاء السعر، يتم إزالة عنصر السعر من التخطيط
                     ),
-                  ),
-                );
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: containerTheme,
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: CachedNetworkImage(
-                      imageUrl: ProjectInfo[index]['image'],
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    ProjectInfo[index]['title'],
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
-                  ),
-                  const SizedBox(height: 10),
-                  widget.showPrice == true
-                      ? Text(
-                    "${ProjectInfo[index]['price']} IQD",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  )
-                      : Text(
-                    "     ",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

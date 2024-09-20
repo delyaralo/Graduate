@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:graduate/login_singup/auth/login.dart';
 import 'package:graduate/splashScreen/customLoadingIndicator.dart';
 import 'Edit/edit_course.dart';
+import 'course_page/shortcut/customBoxDocoration.dart';
+import 'course_page/shortcut/customCard.dart';
 import 'course_screen.dart';
 import 'login_singup/auth/token_manager.dart';
 import 'main.dart';
@@ -47,7 +49,7 @@ class _CourseState extends State<Course> {
     return Center(
       child: isloaded
           ? GridView.builder(
-        itemCount:CourseInfo.length<4?CourseInfo.length:4,
+        itemCount:CourseInfo.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -69,47 +71,43 @@ class _CourseState extends State<Course> {
                     lock: true,
                     price: CourseInfo[index]['price'].toString(),
                     description: CourseInfo[index]['description'],
-                    depWhatsApp: '07748687725',
+                    depWhatsApp: '07748687725-g_raduate-g_raduate',
                     trailerVideo: CourseInfo[index]['trailerVideo'],
                     showPrice: widget.showPrice,
                   ),
                 ),
               );
             },
-            child: Container(
-              padding: EdgeInsets.only( top:10,right: 10,left: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: containerTheme,
+            child: Card(
+              elevation: 8, // Shadow elevation
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20), // Border radius
               ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: CachedNetworkImage(
-                      imageUrl: CourseInfo[index]['image'],
-                      width: 100,
-                      height: 100,
-                      placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+              child: Container(
+                decoration: CustomBoxDecoration(context,courseThemeBegin),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // Center content
+                  crossAxisAlignment: CrossAxisAlignment.center, // Center content horizontally
+                  children: [
+                CustomCard(
+                imageUrl: CourseInfo[index]['image']!,
+                  title: CourseInfo[index]['title']!,
+                ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0), // Bottom padding
+                      child: Text(
+                        widget.showPrice == true
+                            ? "${CourseInfo[index]['price']} IQD"
+                            : " ",
+                        style: TextStyle(
+                          fontSize: 14, // حجم النص للسعر
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF28A8AF),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    CourseInfo[index]['title'],
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6)),
-                  ),
-                  const SizedBox(height: 10),
-                  widget.showPrice
-                      ? Text(
-                    " ${CourseInfo[index]['price']} IQD",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  )
-                      : Text(
-                    "     ",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black),
-                  )
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -121,7 +119,7 @@ class _CourseState extends State<Course> {
 
   Future<List<dynamic>> getCourse(String instructorId) async {
     try {
-      var response = await ApiClient().getAuthenticatedRequest(context, "/api/Course/instructor/$instructorId");
+      var response = await ApiClient().getAuthenticatedRequest(context, "/api/TrendCourses");
       if (response?.statusCode == 200) {
         final List<dynamic> courseList = json.decode(response!.body);
         print(response.body);

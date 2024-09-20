@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor:Color(0xffCFFFFE),
       body: Center(
-        child: Image.asset('images/splash.gif'),
+        child: Image.asset('images/splash_v.gif'),
       ),
     );
   }

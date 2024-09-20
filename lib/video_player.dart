@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:graduate/main.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'dart:math';
+
 class VideoPlayer extends StatefulWidget {
   final String url;
   final String phone_number;
   const VideoPlayer({super.key, required this.url, required this.phone_number});
+
   @override
   State<VideoPlayer> createState() => _VideoPlayerState();
 }
+
 class _VideoPlayerState extends State<VideoPlayer> {
   late YoutubePlayerController controller;
   double positionX = 0.0; // الموضع الأفقي الحالي للرقم
@@ -18,6 +22,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   double screenHeight = 0.0; // ارتفاع الشاشة
   late Timer textAnimationTimer;
   Random random = Random();
+
   @override
   void initState() {
     super.initState();
@@ -32,41 +37,52 @@ class _VideoPlayerState extends State<VideoPlayer> {
       setState(() {}); // إعادة إنشاء الشاشة لتحديث الموقع
     });
   }
+
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
-    return Stack(
-      children: [
-        Scaffold(
-          body: Column(
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: YoutubePlayer(
-                  controller: controller,
-                  showVideoProgressIndicator: true,
-                ),
-              ),
-            ],
-          ),
-        ),
-        // استخدم Transform.translate لنقل النص بشكل عشوائي في الاتجاهين
-        Transform.translate(
-          offset: Offset(positionX, positionY),
-          child:  Text(
-            widget.phone_number,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          // خلفية الفيديو
+          Container(
+            height: screenHeight,
+            width: screenWidth,
+            child: YoutubePlayer(
+              controller: controller,
+              showVideoProgressIndicator: true,
             ),
           ),
-        ),
-      ],
+          // زر العودة
+          Positioned(
+            top: 5,
+            left: 5,
+            child: IconButton(
+              icon: Icon(Icons.close, color:Color(0xff32DDE6), size: 30),
+              onPressed: () {
+                Navigator.of(context).pop(); // العودة إلى الصفحة السابقة
+              },
+            ),
+          ),
+          // النص المتحرك
+          Transform.translate(
+            offset: Offset(positionX, positionY),
+            child: Text(
+              widget.phone_number,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
+
   @override
   void dispose() {
     super.dispose();

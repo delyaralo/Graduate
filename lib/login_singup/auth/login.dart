@@ -5,6 +5,7 @@ import 'package:auto_orientation/auto_orientation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graduate/login_singup/auth/forget_password.dart';
+import 'package:graduate/login_singup/auth/singup.dart';
 import '../../main.dart';
 import '../../screens.dart';
 import '../../splashScreen/customLoadingIndicator.dart';
@@ -70,14 +71,19 @@ class _Login extends State<Login>
                             margin: const EdgeInsets.only(top: 10,bottom: 10,left: 20),
                             child: InkWell(
                                 onTap: (){
-                                  Navigator.pushNamed(context,"signup");
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Signup(),));
                                 },
-                                child: Text("انشاء حساب جديد",style: TextStyle(fontSize: 14 ,letterSpacing: 1,wordSpacing: 2,color: Colors.white70,fontWeight: FontWeight.bold),textAlign: TextAlign.right))),
+                                child: Text("انشاء حساب جديد",style: TextStyle(fontSize: 14 ,letterSpacing: 1,wordSpacing: 2,color: Colors.white70,fontWeight: FontWeight.bold),textAlign: TextAlign.right))
+                        ),
                         Container(
                             margin: const EdgeInsets.only(top: 10,bottom: 10,right: 20),
                             child: InkWell(
                                 onTap: (){
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ForgetPassword(),));
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const Signup(), // تأكد من إضافة `const` إذا كانت الواجهة ثابتة (Stateless)
+                                    ),
+                                  );
                                 },
                                 child: const Text("نسيت كلمة السر؟",style: TextStyle(fontSize: 14 ,letterSpacing: 1,wordSpacing: 2,color: Colors.white70),textAlign: TextAlign.right))),
                       ],

@@ -13,7 +13,7 @@ class DescriptionSection extends StatelessWidget
     return Column(
       children: [
         Text(description,
-        style: TextStyle(fontSize: 16,color: Colors.black.withOpacity(0.7),letterSpacing: 0.6,height: 1.3),textAlign: TextAlign.start,),
+        style: TextStyle(fontSize: 16,letterSpacing: 0.6,height: 1.3),textAlign: TextAlign.start,),
       ],
   );
   }

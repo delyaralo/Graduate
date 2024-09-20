@@ -1,5 +1,7 @@
+import 'dart:async'; // استيراد مكتبة Timer
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:graduate/main.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
@@ -15,11 +17,13 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
   List<Map<String, String?>> slides = [];
   PageController _pageController = PageController();
   bool isLoading = true;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _fetchImageUrls();
+    _startAutoSlide();
   }
 
   Future<void> _fetchImageUrls() async {
@@ -51,6 +55,26 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
     }
   }
 
+  void _startAutoSlide() {
+    _timer = Timer.periodic(Duration(seconds: 8), (timer) {
+      if (_pageController.hasClients) {
+        final nextPage = (_pageController.page! + 1).toInt() % slides.length;
+        _pageController.animateToPage(
+          nextPage,
+          duration: Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _launchURL(String? url) async {
     if (url != null && await canLaunch(url)) {
       await launch(url);
@@ -62,11 +86,16 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // احسب قيمة borderRadius بناءً على العرض
+    double borderRadiusValue = screenWidth * 0.05; // 5% من العرض
 
     return isLoading
         ? Center(child: CustomLoadingIndicator())
         : Container(
       height: screenHeight * 0.4, // Adjust height as needed
+      width: screenWidth, // Make sure the width matches the screen width
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -86,9 +115,9 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: CachedNetworkImageProvider(slides[index]['imageUrl']!),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain, // Use BoxFit.contain to preserve the aspect ratio
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(borderRadiusValue), // استخدام القيمة المحسوبة
                     ),
                   ),
                 );
@@ -101,7 +130,7 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
               controller: _pageController,
               count: slides.length,
               effect: WormEffect(
-                activeDotColor: Colors.blue,
+                activeDotColor: mainColors,
                 dotColor: Colors.grey,
                 dotHeight: 8,
                 dotWidth: 8,
@@ -113,7 +142,7 @@ class _CustomAppBarWidgetState extends State<CustomAppBarWidget> {
                 } else {
                   _pageController.animateToPage(
                     index,
-                    duration: Duration(milliseconds: 300),
+                    duration: Duration(milliseconds: 800),
                     curve: Curves.easeInOut,
                   );
                 }

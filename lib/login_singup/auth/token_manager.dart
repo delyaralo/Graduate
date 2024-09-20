@@ -262,5 +262,116 @@ class ApiClient {
     }
 
   }
+  Future<String?> isWatched(BuildContext context,String courseId,String videoId)async {
 
+    var jwtToken = await ApiClient().getJwtToken();
+    final headers= {'Authorization': 'Bearer $jwtToken','Content-Type': 'application/json'};
+    var url = Uri.https(URL,"/api/Videos/Watch");
+    bool waitexp=  await isJwtTokenExpired();
+    final sessionId = await getSessionId();
+    if (sessionId != null) {
+      headers['Cookie'] = 'SessionId=$sessionId';
+    }
+    else
+    {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Login(),),(route) => false,);
+    }
+    if (jwtToken != null && !waitexp) {
+
+      Map<String, String> data = {
+        "courseId": courseId,
+        "videoId": videoId,
+      };
+      String jsonBody = jsonEncode(data);
+
+      // JWT token is validH, attach it to the request header
+      try {
+        print(courseId);
+        print(videoId);
+
+        final response = await http.post(url, headers: headers,body: jsonBody);
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          // Handle the successful response
+          return "تم الأضافة";
+        }else if (response.statusCode == 404) {
+          // JWT token expired, attempt to refresh
+          // ignore: use_build_context_synchronously
+          return "لايوجد";
+        } else if (response.statusCode == 401) {
+          // JWT token expired, attempt to refresh
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Login(),), (
+              route) => false,);
+          return "حدثت مشكلة اثناء اضافة الكورس";
+        } else if (response.statusCode == 499) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Login(),), (
+              route) => false,);
+          return "حدثت مشكلة اثناء اضافة الكورس";
+        }
+      }
+      catch(e)
+      {
+        return "حدثت مشكلة اثناء اضافة الكورس";
+      }
+    }
+
+  }
+  Future<String?> isNotWatched(BuildContext context,String courseId,String videoId)async {
+    print(courseId);
+    var jwtToken = await ApiClient().getJwtToken();
+    final headers= {'Authorization': 'Bearer $jwtToken','Content-Type': 'application/json'};
+    var url = Uri.https(URL,"/api/Videos/Watch");
+    bool waitexp=  await isJwtTokenExpired();
+    final sessionId = await getSessionId();
+    if (sessionId != null) {
+      headers['Cookie'] = 'SessionId=$sessionId';
+    }
+    else
+    {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Login(),),(route) => false,);
+    }
+    if (jwtToken != null && !waitexp) {
+
+      Map<String, String> data = {
+        "courseId": courseId,
+        "videoId": videoId,
+      };
+      String jsonBody = jsonEncode(data);
+
+      // JWT token is validH, attach it to the request header
+      try {
+        // Make the API request
+        final response = await http.delete(url, headers: headers,body: jsonBody);
+        print(response.body);
+        if (response.statusCode == 200) {
+          // Handle the successful response
+          return "تم الأضافة";
+        }else if (response.statusCode == 404) {
+          // JWT token expired, attempt to refresh
+          // ignore: use_build_context_synchronously
+          return "تمت اضافة هذه الكورس بالفعل";
+        } else if (response.statusCode == 401) {
+          // JWT token expired, attempt to refresh
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Login(),), (
+              route) => false,);
+          return "حدثت مشكلة اثناء اضافة الكورس";
+        } else if (response.statusCode == 499) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Login(),), (
+              route) => false,);
+          return "حدثت مشكلة اثناء اضافة الكورس";
+        }
+      }
+      catch(e)
+      {
+        return "حدثت مشكلة اثناء اضافة الكورس";
+      }
+    }
+
+  }
 }

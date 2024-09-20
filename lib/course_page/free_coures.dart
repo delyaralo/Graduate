@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:graduate/course_page/shortcut/customBoxDocoration.dart';
+import 'package:graduate/course_page/shortcut/customCard.dart';
 import '../Edit/edit_course.dart';
 import '../course_screen.dart';
 import '../login_singup/auth/login.dart';
 import '../login_singup/auth/token_manager.dart';
-import '../login_singup/shortcut/customappbar.dart';
 import '../main.dart';
-import '../screens/appBar.dart';
 
 class FreeCourse extends StatefulWidget {
   final String teacherId;
@@ -19,46 +19,55 @@ class FreeCourse extends StatefulWidget {
 
 class _FreeCourseState extends State<FreeCourse> {
   late List<dynamic> courseInfo = [];
+  late List<dynamic> filteredCourseInfo = [];
   late bool isLoaded = false;
   late bool isEmpty = false;
+  late TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
+    _searchController.addListener(_filterCourses);
     _loadTeacherInfo();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTeacherInfo() async {
     final teacherInfo = await getCourse(widget.teacherId);
-    if (teacherInfo.isNotEmpty) {
-      setState(() {
-        courseInfo = teacherInfo;
-        isLoaded = true;
-        isEmpty = false;
-      });
-    } else {
-      setState(() {
-        isEmpty = true;
-      });
-    }
+    setState(() {
+      courseInfo = teacherInfo;
+      filteredCourseInfo = courseInfo;
+      isLoaded = true;
+      isEmpty = teacherInfo.isEmpty;
+    });
+  }
+
+  void _filterCourses() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      filteredCourseInfo = courseInfo.where((course) {
+        final title = course['title'].toLowerCase();
+        return title.contains(query);
+      }).toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // الحصول على عرض وارتفاع الشاشة
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // حساب عدد الأعمدة اعتمادًا على عرض الشاشة
     int crossAxisCount = screenWidth < 600 ? 2 : screenWidth < 900 ? 3 : 4;
-
-    // حساب نسبة العرض إلى الارتفاع ديناميكيًا
-    double childAspectRatio = screenWidth / (screenHeight / 1.2);
+    double childAspectRatio = screenWidth / (screenHeight / 1.5); // تحسين نسبة العرض إلى الارتفاع
 
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.grey[50],
         elevation: 0,
         centerTitle: true,
         title: const Text(
@@ -66,98 +75,123 @@ class _FreeCourseState extends State<FreeCourse> {
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
         ),
       ),
-      body: isLoaded
-          ? isEmpty
-          ? const Center(
-        child: Text(
-          "لا توجد كورسات",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-      )
-          : GridView.builder(
-        itemCount: courseInfo.length,
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          childAspectRatio: childAspectRatio,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-        ),
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CourseScreen(
-                    CourseId: courseInfo[index]['id'],
-                    Courseimage: courseInfo[index]['image'],
-                    Coursetitle: courseInfo[index]['title'],
-                    lock: true,
-                    price: courseInfo[index]['price'].toString(),
-                    description: courseInfo[index]['description'],
-                    depWhatsApp: '07748687725',
-                    trailerVideo: courseInfo[index]['trailerVideo'],
-                    showPrice: false,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'ابحث باسم الدورة...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xff32DDE6), width: 1.5),
                   ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xff28A8AF), width: 1.5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Color(0xff247D95), width: 1.5),
+                  ),
+                  suffixIcon: Icon(Icons.search, color: mainColors, size: 20),
                 ),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: containerTheme,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodySmall?.color, // Correct way to access primary color
+                ),
+                textAlign: TextAlign.right,
               ),
+
+            ),
+          ),
+          Expanded(
+            child: isLoaded
+                ? isEmpty
+                ? const Center(
+              child: Text(
+                "لا توجد كورسات",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            )
+                : GridView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              itemCount: filteredCourseInfo.length,
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: childAspectRatio, // استخدام نسبة العرض إلى الارتفاع المحسنة
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+              ),
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CourseScreen(
+                          CourseId: filteredCourseInfo[index]['id'],
+                          Courseimage: filteredCourseInfo[index]['image'],
+                          Coursetitle: filteredCourseInfo[index]['title'],
+                          lock: true,
+                          price: filteredCourseInfo[index]['price'].toString(),
+                          description: filteredCourseInfo[index]['description'],
+                          depWhatsApp: '07748687725',
+                          trailerVideo: filteredCourseInfo[index]['trailerVideo'],
+                          showPrice: false,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    elevation: 8, // تقليل ارتفاع الظل
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20), // تقليل الحدود الدائرية
+                    ),
+                    child: Container(
+                      decoration: CustomBoxDecoration(context,courseThemeBegin),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center, // تعديل التمركز في المنتصف
+                        crossAxisAlignment: CrossAxisAlignment.center, // التمركز أفقياً
+                        children: [
+                      CustomCard(
+                      imageUrl: filteredCourseInfo[index]['image']!,
+                        title: filteredCourseInfo[index]['title']!,
+                      ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: const Text(
+                              "مجاناً",
+                              style: TextStyle(
+                                fontSize: 18, // تصغير حجم النص
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF28A8AF),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )
+                : Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: CachedNetworkImage(
-                      imageUrl: courseInfo[index]['image'],
-                      width: 100,
-                      height: 100,
-                      placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                      const Icon(Icons.error),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    courseInfo[index]['title'],
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black.withOpacity(0.6),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "مجاناً",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black),
-                  )
+                  CircularProgressIndicator(),
                 ],
               ),
             ),
-          );
-        },
-      )
-          : Center(
-        child: Column(
-          children: [
-            SizedBox(height: screenHeight / 1.8),
-            const CircularProgressIndicator(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
