@@ -129,6 +129,7 @@ class MyApp extends StatelessWidget {
     } else {
       // Normal app behavior
      FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+
       return MaterialApp(
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
