@@ -7,21 +7,28 @@ import '../login_singup/auth/token_manager.dart';
 import '../main.dart';
 import '../splashScreen/customLoadingIndicator.dart';
 
-class TeachersFreeCourse extends StatefulWidget {
-  const TeachersFreeCourse({super.key});
 
+
+class TeachersFreeCourse extends StatefulWidget
+{
+
+  const TeachersFreeCourse({   super.key  });
   @override
   State<TeachersFreeCourse> createState() => _TeachersState();
+
 }
 
-class _TeachersState extends State<TeachersFreeCourse> {
+class _TeachersState extends State<TeachersFreeCourse>
+{
+
   late List<dynamic> TeacherInfo = [];
   late List<dynamic> filteredTeacherInfo = [];
   late bool isLoaded = false;
   late TextEditingController _searchController;
 
   @override
-  void initState() {
+  void initState()
+  {
     super.initState();
     _searchController = TextEditingController();
     _searchController.addListener(_filterTeachers);
@@ -69,13 +76,12 @@ class _TeachersState extends State<TeachersFreeCourse> {
 
     // Adjust the child aspect ratio based on screen dimensions
     double childAspectRatio = screenWidth / (screenHeight * 0.75);
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
         title: const Text(
-          "أساتذة الدورات المجانية",
+          "ألاساتذة",
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
         ),
       ),
@@ -133,7 +139,8 @@ class _TeachersState extends State<TeachersFreeCourse> {
                       mainAxisSpacing: 10,
                       crossAxisSpacing: 10,
                     ),
-                    itemBuilder: (context, index) {
+                    itemBuilder: (context, index)
+                    {
                       return InkWell(
                         onTap: () {
                           Navigator.of(context).push(
@@ -177,10 +184,9 @@ class _TeachersState extends State<TeachersFreeCourse> {
       ),
     );
   }
-
   Future<List<dynamic>> getTeacher() async {
     try {
-      var response = await ApiClient().getAuthenticatedRequest(context, "/api/Instructor");
+      var response = await ApiClient().getAuthenticatedRequest(context, "/api/Instructor/free");
       final List<dynamic> TeacherList = json.decode(response!.body);
       if (response.statusCode == 200) {
         return TeacherList;

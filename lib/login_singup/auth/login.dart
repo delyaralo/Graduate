@@ -14,6 +14,8 @@ import '../shortcut/custombotton.dart';
 import '../shortcut/logo.dart';
 import '../shortcut/textformfield.dart';
 import 'package:http/http.dart' as http;
+
+import 'Confirmation_page.dart';
 bool isadmin=false;
 final secure_storage=new FlutterSecureStorage();
 class Login extends StatefulWidget
@@ -81,7 +83,7 @@ class _Login extends State<Login>
                                 onTap: (){
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => const Signup(), // تأكد من إضافة `const` إذا كانت الواجهة ثابتة (Stateless)
+                                      builder: (context) =>ForgetPassword(), // تأكد من إضافة `const` إذا كانت الواجهة ثابتة (Stateless)
                                     ),
                                   );
                                 },
@@ -158,7 +160,7 @@ class _Login extends State<Login>
           for (var error in errors)
           {
             if (error=='EMAIL_NOT_CONFIRMED')
-              showSnackbar(context, 'يرجى تاكيد البريد الكتروني');
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ConfirmationPage()));
             else if (error=='INVALID_EMAIL_OR_PASSWORD')
               showSnackbar(context, 'كلمة السر او البريد خطأ يرجى المحاولة مره اخرى');
           }}

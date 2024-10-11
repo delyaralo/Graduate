@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:graduate/main.dart';
 import 'dart:convert';
+import '../../custombutton.dart';
 import '../../splashScreen/customLoadingIndicator.dart';
-import '../../video_player.dart';
+
 import '../../video_section.dart';
 import '../auth/token_manager.dart';
 
@@ -59,7 +60,7 @@ class _CountVideoSection extends State<CountVideoSection> {
             title: Text('مقدمة الدورة'),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => VideoPlayer(
+                builder: (context) => Video_Player(
                   url: widget.trailerVideo,
                   phone_number: '',
                 ),
@@ -85,7 +86,7 @@ class _CountVideoSection extends State<CountVideoSection> {
               title: Text(video['title'],style: TextStyle(fontWeight: FontWeight.bold),),
               onTap: video['isFree']  ? () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => VideoPlayer(
+                  builder: (context) => Video_Player(
                     url: video['link'],
                     phone_number: widget.phone_number,
                   ),
@@ -94,7 +95,7 @@ class _CountVideoSection extends State<CountVideoSection> {
                   ? null
                   : () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => VideoPlayer(
+                  builder: (context) => Video_Player(
                     url: video['link'],
                     phone_number: widget.phone_number,
                   ),

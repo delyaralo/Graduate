@@ -15,6 +15,8 @@ import '../shortcut/logo.dart';
 import '../shortcut/textformfield.dart';
 import 'package:http/http.dart' as http;
 
+import 'Confirmation_page.dart';
+
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -398,7 +400,10 @@ class _Signup extends State<Signup> {
       Navigator.of(context).pop(); // Close the loading dialog
 
       if (response.statusCode == 200) {
-        showConfirmationDialog();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => ConfirmationPage()),
+              (Route<dynamic> route) => false, // هذا المعامل يضمن إزالة جميع الصفحات السابقة
+        );
         print("Registration successful");
       } else {
         if (response.headers['content-type'] == 'application/json; charset=utf-8') {

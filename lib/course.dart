@@ -49,7 +49,7 @@ class _CourseState extends State<Course> {
     return Center(
       child: isloaded
           ? GridView.builder(
-        itemCount:CourseInfo.length,
+        itemCount:CourseInfo.length >=4 ? 4:CourseInfo.length ,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

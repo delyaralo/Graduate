@@ -3,6 +3,7 @@ import 'package:graduate/main.dart';
 import 'package:graduate/splashScreen/customLoadingIndicator.dart';
 import 'package:graduate/video_player.dart';
 import 'Edit/edit_video.dart';
+import 'custombutton.dart';
 import 'login_singup/auth/login.dart';
 import 'login_singup/auth/token_manager.dart';
 import 'dart:convert';
@@ -90,7 +91,7 @@ class _VideoSectionState extends State<VideoSection> {
                   ? null
                   : () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => VideoPlayer(
+                  builder: (context) => Video_Player(
                     url: video['link'],
                     phone_number: widget.phone_number,
                   ),

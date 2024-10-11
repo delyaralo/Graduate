@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../custombutton.dart';
 import '../../video_player.dart';
 
 class ImageView extends StatelessWidget {
@@ -52,7 +53,7 @@ class ImageView extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => VideoPlayer(url: trailerVideo, phone_number: ''),
+                        builder: (context) => Video_Player(url: trailerVideo, phone_number: ''),
                       ),
                     );
                   },
