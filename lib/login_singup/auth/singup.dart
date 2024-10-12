@@ -401,7 +401,7 @@ class _Signup extends State<Signup> {
 
       if (response.statusCode == 200) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => ConfirmationPage()),
+          MaterialPageRoute(builder: (context) => ConfirmationPage(resend_massege: Email.text,)),
               (Route<dynamic> route) => false, // هذا المعامل يضمن إزالة جميع الصفحات السابقة
         );
         print("Registration successful");

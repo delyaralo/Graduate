@@ -1,19 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:graduate/login_singup/auth/Confirmation_page.dart';
 import 'package:graduate/main.dart';
 import '../shortcut/custombotton.dart';
 import '../shortcut/textformfield.dart';
 import 'login.dart';
 import 'package:http/http.dart' as http;
-class ConfirmationPage extends StatefulWidget {
-  const ConfirmationPage({super.key});
+class resendConfirmationMassege extends StatefulWidget {
+  const resendConfirmationMassege({super.key});
 
   @override
-  _ConfirmationPage createState() => _ConfirmationPage();
+  _resendConfirmationMassege createState() => _resendConfirmationMassege();
 }
 
-class _ConfirmationPage extends State<ConfirmationPage> {
+class _resendConfirmationMassege extends State<resendConfirmationMassege> {
   TextEditingController resend_massege=TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -49,25 +50,6 @@ class _ConfirmationPage extends State<ConfirmationPage> {
       ),
     );
   }
-  Future<void> showConfirmationDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('تم ارسال رسالة تأكيد البريد الكتروني',style:TextStyle(fontSize: 14 ,letterSpacing: 1,wordSpacing: 2,fontWeight: FontWeight.bold,),textAlign:TextAlign.center),
-          content: const Text('يرجى الذهاب الى البريد الكتروني وتأكيد البريد',style:TextStyle(fontSize: 14 ,letterSpacing: 1,wordSpacing: 2,fontWeight: FontWeight.bold),textAlign:TextAlign.center),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('حسنًا',style:TextStyle(fontSize: 14 ,letterSpacing: 1,wordSpacing: 2,fontWeight: FontWeight.bold),textAlign:TextAlign.center),
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Login(),), (route) => false);// Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
   void ResendCodeConfirmation() async {
     showDialog(context: context, builder: (context) =>
     const Center(child: CircularProgressIndicator())
@@ -93,8 +75,7 @@ class _ConfirmationPage extends State<ConfirmationPage> {
     // Check the response
     if (response.statusCode == 200)
     {
-      showConfirmationDialog();
-
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>ConfirmationPage(resend_massege: resend_massege.text,)),(route) => false,);
     }
     else
     {

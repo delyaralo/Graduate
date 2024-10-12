@@ -5,6 +5,7 @@ import 'package:auto_orientation/auto_orientation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graduate/login_singup/auth/forget_password.dart';
+import 'package:graduate/login_singup/auth/resend_confirmation_email.dart';
 import 'package:graduate/login_singup/auth/singup.dart';
 import '../../main.dart';
 import '../../screens.dart';
@@ -97,6 +98,19 @@ class _Login extends State<Login>
                       }
                     }
                         , text: "تسجيل الدخول"),
+                    Center(
+                      child: Container(
+                          margin: EdgeInsets.only(top: 10,bottom: 10,right: 20),
+                          child: InkWell(
+                              onTap: (){
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>resendConfirmationMassege(), // تأكد من إضافة `const` إذا كانت الواجهة ثابتة (Stateless)
+                                  ),
+                                );
+                              },
+                              child: Text("أعادة ارسال رسالة التأكيد البريد",style: TextStyle(fontSize: 14 ,letterSpacing: 1,wordSpacing: 2,color: Colors.white70,fontWeight: FontWeight.bold),textAlign: TextAlign.right))),
+                    ),
                   ],
                 ),
               ],
@@ -159,8 +173,10 @@ class _Login extends State<Login>
         if (responseJson.containsKey("errors") && responseJson["errors"] is List) {
           for (var error in errors)
           {
-            if (error=='EMAIL_NOT_CONFIRMED')
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ConfirmationPage()));
+            if (error == 'EMAIL_NOT_CONFIRMED') {
+              // Close the current loading dialog or any other dialogs
+              showSnackbar(context, 'الرجاء قم بتأكيد البريد الكتروني');
+            }
             else if (error=='INVALID_EMAIL_OR_PASSWORD')
               showSnackbar(context, 'كلمة السر او البريد خطأ يرجى المحاولة مره اخرى');
           }}

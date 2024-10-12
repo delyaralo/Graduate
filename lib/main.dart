@@ -27,6 +27,8 @@ Color departmentThemeBegin = ThemeColors.departmentThemeBeginLight;
 Color departmentThemeEnd = ThemeColors.departmentThemeEnd;
 Color bottomNavigationBarDark = ThemeColors.bottomNavigationBarDark;
 
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
   bool isPolicyAccepted = await _checkIfPolicyAccepted(); // Check if policy was accepted
@@ -70,7 +72,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class MyApp extends StatelessWidget {
   final bool isPolicyAccepted;
   final bool isEmulator;
-  bool underDeveloment = false; // Set to false when you finish development
+  bool underDeveloment = true; // Set to false when you finish development
 
   MyApp({required this.isPolicyAccepted, required this.isEmulator});
 
@@ -126,9 +128,10 @@ class MyApp extends StatelessWidget {
           body: Center(child: Text('الرجاء استخدام جهاز حقيقي')),
         ),
       );
-    } else {
-      // Normal app behavior
-     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    }
+    else {
+
+     //FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
 
       return MaterialApp(
         navigatorKey: navigatorKey,
@@ -150,5 +153,4 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// شاشة سياسة الاستخدام
 
