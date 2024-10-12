@@ -260,7 +260,6 @@ class _ConfirmationPage extends State<ConfirmationPage> {
       headers: headers,
       body: jsonBody,
     );
-
     if (response.statusCode == 200) {
       showSnackbar(context, "تم ارسال رسالة التأكيد الى بريدك");
     } else {
@@ -275,7 +274,6 @@ class _ConfirmationPage extends State<ConfirmationPage> {
       Navigator.of(context).pop();
     }
   }
-
   void showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
