@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:auto_orientation/auto_orientation.dart';
@@ -129,6 +130,16 @@ class _Video_Player extends State<Video_Player> {
                   ), // Color overlay to cover the top portion and hide the title and download button
                 ),
               ),
+              Platform.isAndroid
+                  ? Positioned(
+                bottom: 60,
+                right: screenWidth * 0.001,
+                child:  Container(
+                  width: screenWidth * 0.9,
+                  height: 45,
+                  color: Colors.white,
+                ), // إذا كان iOS، قم بتعطيلها باستخدام عنصر فارغ
+              ):SizedBox.shrink(),
               Positioned(
                 top: 10, // تعديل الموضع بناءً على حجم الشاشة
                 right: 10, // تعديل الموضع بناءً على حجم الشاشة
@@ -138,17 +149,14 @@ class _Video_Player extends State<Video_Player> {
                   color: Colors.transparent, // لجعل الغطاء غير مرئي ولكن يعطل الزر
                 ),
               ),
-              // تغطية زر Full Screen مع تعديل الأبعاد بناءً على الوضع
               Positioned(
-                top: 10, // تعديل الموضع بناءً على حجم الشاشة
-                right: 10, // تعديل الموضع بناءً على حجم الشاشة
+                top: 10, // تعديل الموضع بناءً على حجم الشاشة// تعديل الموضع بناءً على حجم الشاشة
                 child: Container(
-                  width: 60, // عرض الغطاء الذي يعطل زر المشاركة
-                  height: 60, // ارتفاع الغطاء
-                  color: Colors.transparent, // لجعل الغطاء غير مرئي ولكن يعطل الزر
+                  width: screenWidth,// عرض الغطاء الذي يعطل زر المشاركة
+                  height: 75, // ارتفاع الغطاء
+                  color: Colors.white, // لجعل الغطاء غير مرئي ولكن يعطل الزر
                 ),
               ),
-              // تغطية زر Full Screen مع تعديل الأبعاد بناءً على الوضع والجهاز
               Positioned(
                 bottom: isLandscape
                     ? screenHeight * 0.018
