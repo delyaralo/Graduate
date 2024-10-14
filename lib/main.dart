@@ -72,7 +72,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class MyApp extends StatelessWidget {
   final bool isPolicyAccepted;
   final bool isEmulator;
-  bool underDeveloment = true;
+  bool underDeveloment = false;
 
   MyApp({required this.isPolicyAccepted, required this.isEmulator});
 
@@ -131,7 +131,7 @@ class MyApp extends StatelessWidget {
     }
     else {
 
-     //FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
 
       return MaterialApp(
         navigatorKey: navigatorKey,
