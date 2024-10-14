@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:graduate/main.dart';
 import 'package:graduate/splashScreen/customLoadingIndicator.dart';
@@ -91,10 +93,11 @@ class _VideoSectionState extends State<VideoSection> {
                   ? null
                   : () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => Video_Player(
+                  builder: (context) => Platform.isAndroid ? Video_Player(
                     url: video['link'],
                     phone_number: widget.phone_number,
-                  ),
+                  ):VideoPlayer(url: video['link'],
+                    phone_number: widget.phone_number),
                 ));
               },
               onLongPress: () {
